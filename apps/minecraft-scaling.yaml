@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: scaling
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: deployments-scaler
+  namespace: scaling
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: deployments-scaler
+rules:
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "patch", "list"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "deployments/scale"]
+  verbs: ["get", "patch", "list"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: deployments-scaler
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: deployments-scaler
+subjects:
+- kind: ServiceAccount
+  name: deployments-scaler
+  namespace: scaling
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: minecraft-restart
+  namespace: scaling
+spec:
+  schedule: "30 3 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: kubectl
+            image: bitnami/kubectl
+            command: ["/bin/sh"]
+            args:
+            - -c
+            - >
+              POD_NAME=`kubectl get pods -n default -l app=minecraft-ozone-3 -o jsonpath='{.items[0].metadata.name}'`;
+              kubectl exec $POD_NAME -n default -- rcon-cli /say ATTENTION: Server will restart in 30 minutes;
+              sleep 900;
+              kubectl exec $POD_NAME -n default -- rcon-cli /say ATTENTION: Server will restart in 15 minutes;
+              sleep 600;
+              kubectl exec $POD_NAME -n default -- rcon-cli /say ATTENTION: Server will restart in 5 minutes;
+              sleep 300;
+              kubectl exec $POD_NAME -n default -- rcon-cli /save-all;
+              kubectl scale deployment -n default minecraft-ozone-3 --replicas 0;
+              sleep 60;
+              kubectl scale deployment -n default minecraft-ozone-3 --replicas 1
+          restartPolicy: OnFailure
+          serviceAccountName: deployments-scaler

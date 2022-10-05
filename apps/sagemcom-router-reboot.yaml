@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: selenium-grid
+  namespace: default
+  labels:
+    app: selenium-grid
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: selenium-grid
+  template:
+    metadata:
+      labels:
+        app: selenium-grid
+    spec:
+      containers:
+      - name: selenium-grid
+        ports:
+        - containerPort: 4444
+        image: selenium/standalone-chrome:4.5.0-20220929
+        volumeMounts:
+        - mountPath: /dev/shm
+          name: dshm
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: selenium-grid
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: selenium-grid
+  ports:
+    - protocol: TCP
+      port: 4444
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sagemcom-router-reboot
+  namespace: default
+spec:
+  schedule: "30 4 * * 3"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: router-reboot
+            image: kevinchanaka/sagemcom-router-reboot
+            envFrom:
+            - secretRef:
+                name: sagemcom-router-reboot
+                optional: false
+            env:
+            - name: ROUTER_IP
+              value: "192.168.50.1"
+            - name: GRID_ENDPOINT
+              value: "selenium-grid:4444"
+          restartPolicy: OnFailure

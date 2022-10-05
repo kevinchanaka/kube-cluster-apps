@@ -1,0 +1,157 @@
+# Using official plex container https://hub.docker.com/r/plexinc/pms-docker
+# Useful guide: https://forums.plex.tv/t/linux-tips/276247/15
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: plex-media
+  namespace: default
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 1Gi
+  claimRef:
+    name: plex-media
+    namespace: default
+  nfs:
+    path: /mnt/NASPool/data/media
+    server: freenas.local 
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plex-media
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: plex-media
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plex-transcode
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: freenas-iscsi-csi
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plex-config
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: freenas-iscsi-csi
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plex
+  namespace: default
+  labels:
+    app: plex
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: plex
+  template:
+    metadata:
+      labels:
+        app: plex
+    spec:
+      containers:
+      - name: plex
+        image: plexinc/pms-docker
+        ports:
+        - containerPort: 32400
+        env:
+        - name: HOSTNAME 
+          value: plex
+        - name: TZ
+          value: Australia/Sydney
+        - name: PLEX_UID
+          value: "1000"
+        - name: PLEX_GID
+          value: "1000"
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: transcode
+          mountPath: /transcode
+        - name: media
+          mountPath: /data
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: plex-config
+      - name: transcode
+        persistentVolumeClaim:
+          claimName: plex-transcode        
+      - name: media
+        persistentVolumeClaim:
+          claimName: plex-media  
+        
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: plex
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: plex
+  ports:
+    - protocol: TCP
+      port: 32400
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: plex
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "nginx" 
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts: 
+    - plex.lab.kevinf.xyz
+    secretName: plex-tls
+  rules:
+  - host: plex.lab.kevinf.xyz
+    http:
+      paths:
+      - backend:
+          service:
+            name: plex
+            port: 
+              number: 32400
+        path: /
+        pathType: Prefix
