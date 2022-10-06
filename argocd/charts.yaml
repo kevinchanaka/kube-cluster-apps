@@ -90,7 +90,7 @@ metadata:
   namespace: argocd
 spec:
   destination:
-    namespace: kube-system
+    namespace: monitoring
     server: https://kubernetes.default.svc
   project: default
   source:
