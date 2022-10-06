@@ -1,0 +1,10 @@
+apiVersion: v2
+name: loki
+description: A Helm chart for Kubernetes
+type: loki
+version: 0.1.0
+appVersion: "1.0"
+dependencies:
+- name: loki
+  version: 3.2.0
+  repository: https://grafana.github.io/helm-charts

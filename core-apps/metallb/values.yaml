@@ -1,3 +1,6 @@
+# Values file for metallb https://github.com/bitnami/charts/tree/master/bitnami/metallb/
+# helm upgrade -i -n metallb-system -f metallb.yaml metallb bitnami/metallb
+
 metallb:
   configInline:
     address-pools:

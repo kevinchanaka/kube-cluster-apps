@@ -1,0 +1,12 @@
+# Values file for nfs-subdir-external-provisioner https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner
+# helm upgrade -i -n kube-system -f nfs-provisioner.yaml nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
+
+nfs-subdir-external-provisioner:
+  nfs:
+    server: freenas.local
+    path: /mnt/NASPool/data/volumes
+  storageClass:
+    reclaimPolicy: Delete
+    onDelete: retain
+    pathPattern: ${.PVC.name}
+    defaultClass: true
