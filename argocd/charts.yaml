@@ -5,10 +5,61 @@ metadata:
   namespace: argocd
 spec:
   destination:
-    namespace: default
+    namespace: cert-manager
     server: https://kubernetes.default.svc
   project: default
   source:
     path: core-apps/cert-manager
+    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metallb
+  namespace: argocd
+spec:
+  destination:
+    namespace: metallb-system
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: core-apps/metallb
+    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ingress-nginx
+  namespace: argocd
+spec:
+  destination:
+    namespace: ingress-nginx
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: core-apps/ingress-nginx
+    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-server
+  namespace: argocd
+spec:
+  destination:
+    namespace: kube-system
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: core-apps/metrics-server
     repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
