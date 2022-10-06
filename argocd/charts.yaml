@@ -9,7 +9,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: core-apps/cert-manager
+    path: charts/cert-manager
     repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
 
@@ -26,7 +26,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: core-apps/metallb
+    path: charts/metallb
     repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
 
@@ -43,7 +43,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: core-apps/ingress-nginx
+    path: charts/ingress-nginx
     repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
 
@@ -60,7 +60,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: core-apps/metrics-server
+    path: charts/metrics-server
     repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
 
@@ -77,7 +77,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: core-apps/nfs-provisioner
+    path: charts/nfs-provisioner
     repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
 
@@ -87,13 +87,13 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: kube-prometheus
-  namespace: monitoring
+  namespace: argocd
 spec:
   destination:
     namespace: kube-system
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: core-apps/kube-prometheus
+    path: charts/kube-prometheus
     repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
