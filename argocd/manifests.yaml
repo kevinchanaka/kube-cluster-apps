@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: manifests
+  name: minecraft
   namespace: argocd
 spec:
   destination:
@@ -12,3 +12,62 @@ spec:
     path: apps
     repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
+    directory:
+      include: "minecraft*.yaml"
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: home-assistant
+  namespace: argocd
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: apps
+    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    directory:
+      include: "home-assistant.yaml"
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: plex
+  namespace: argocd
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: apps
+    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    directory:
+      include: "plex.yaml"
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sagemcom-router-reboot
+  namespace: argocd
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: apps
+    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    directory:
+      include: "sagemcom-router-reboot.yaml"

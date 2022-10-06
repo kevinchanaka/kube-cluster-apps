@@ -1,0 +1,9 @@
+cert-manager:
+  prometheus:
+    enabled: true
+    servicemonitor: 
+      enabled: true
+      namespace: monitoring
+
+  webhook:
+    timeoutSeconds: 4
