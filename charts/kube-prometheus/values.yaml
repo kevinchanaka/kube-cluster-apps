@@ -3,7 +3,7 @@
 # helm upgrade -i -n monitoring -f kube-prometheus.yaml kube-prometheus prometheus-community/kube-prometheus-stack
 # NOTE: first install/upgrade the CRDs here manually: https://github.com/prometheus-operator/prometheus-operator/tree/master/example/prometheus-operator-crd
 
-kube-prometheus:
+kube-prometheus-stack:
   fullnameOverride: "kp"
 
   global:

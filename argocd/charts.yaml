@@ -86,7 +86,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kube-prometheus-stack
+  name: kube-prometheus
   namespace: argocd
 spec:
   destination:
@@ -97,5 +97,3 @@ spec:
     path: charts/kube-prometheus
     repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
-    helm:
-      releaseName: kube-prometheus
