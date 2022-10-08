@@ -96,6 +96,25 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  name: terraria
+  namespace: argocd
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: manifests
+    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    directory:
+      include: "terraria.yaml"
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
   name: miscellaneous
   namespace: argocd
 spec:
