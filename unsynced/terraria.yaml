@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: terraria-config
+  namespace: default
+data:
+  serverconfig.txt: |
+    world=worlds/world.wld
+    worldname=world
+    autocreate=3
+    difficulty=2
+    maxplayers=8
+    motd=Welcome to Kev's rockin terraria server!
+    password={{ terraria.password }}
+    worldpath=worlds
+    banlist=config/banlist.txt
+    language=en-US
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: terraria
+  namespace: default
+  labels:
+    app: terraria
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: terraria
+  template:
+    metadata:
+      labels:
+        app: terraria
+    spec:
+      containers:
+      - name: terraria
+        image: kevinchanaka/terraria:latest
+        ports:
+        - containerPort: 7777
+        volumeMounts:
+        - name: terraria-data
+          mountPath: /app/data
+        - name: terraria-config
+          mountPath: /app/data/config/serverconfig.txt
+          subPath: serverconfig.txt
+      volumes:
+      - name: terraria-data
+        persistentVolumeClaim:
+          claimName: terraria
+      - name: terraria-config
+        configMap:
+          items:
+          - key: serverconfig.txt
+            path: serverconfig.txt
+          name: terraria-config
+        
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: terraria
+  namespace: default
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: terraria
+  namespace: default
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.50.161
+  selector:
+    app: terraria
+  ports:
+    - protocol: TCP
+      port: 7777
