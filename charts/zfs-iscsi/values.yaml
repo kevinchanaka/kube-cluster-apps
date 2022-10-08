@@ -3,29 +3,30 @@
 # https://github.com/democratic-csi/democratic-csi/blob/master/examples/freenas-iscsi.yaml
 # helm upgrade -i -n democratic-csi -f democratic-csi.yaml zfs-iscsi democratic-csi/democratic-csi
 
-csiDriver:
-  name: "org.democratic-csi.iscsi"
+democratic-csi:
+  csiDriver:
+    name: "org.democratic-csi.iscsi"
 
-storageClasses:
-- name: freenas-iscsi-csi
-  defaultClass: false
-  reclaimPolicy: Retain
-  volumeBindingMode: Immediate
-  allowVolumeExpansion: true
-  parameters:
-    fsType: ext4
+  storageClasses:
+  - name: freenas-iscsi-csi
+    defaultClass: false
+    reclaimPolicy: Retain
+    volumeBindingMode: Immediate
+    allowVolumeExpansion: true
+    parameters:
+      fsType: ext4
 
-  mountOptions: []
-  secrets:
-    provisioner-secret:
-    controller-publish-secret:
-    node-stage-secret:
-    node-publish-secret:
-    controller-expand-secret:
+    mountOptions: []
+    secrets:
+      provisioner-secret:
+      controller-publish-secret:
+      node-stage-secret:
+      node-publish-secret:
+      controller-expand-secret:
 
-volumeSnapshotClasses: []
+  volumeSnapshotClasses: []
 
-driver:
-  existingConfigSecret: zfs-iscsi-democratic-csi-driver-config
-  config:
-    driver: freenas-iscsi
+  driver:
+    existingConfigSecret: zfs-iscsi-democratic-csi-driver-config
+    config:
+      driver: freenas-iscsi
