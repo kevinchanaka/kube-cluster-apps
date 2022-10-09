@@ -52,6 +52,8 @@ metadata:
   namespace: default
 spec:
   schedule: "30 4 * * 3"
+  failedJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 1
   jobTemplate:
     spec:
       template:

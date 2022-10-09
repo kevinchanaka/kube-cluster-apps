@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: deployments-scaler
-  namespace: scaling
+  namespace: default
 
 ---
 
@@ -34,7 +34,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: deployments-scaler
-  namespace: scaling
+  namespace: default
 
 ---
 
@@ -42,9 +42,11 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: minecraft-restart
-  namespace: scaling
+  namespace: default
 spec:
   schedule: "30 3 * * *"
+  failedJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 1
   jobTemplate:
     spec:
       template:
