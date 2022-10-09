@@ -9,7 +9,6 @@ namespaces=(
     "ingress-nginx" 
     "metallb-system"
     "monitoring"
-    "scaling"
 )
 
 # Creating namespaces used by cluster
