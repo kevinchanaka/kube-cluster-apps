@@ -1,5 +1,6 @@
 # Using official plex container https://hub.docker.com/r/plexinc/pms-docker
 # Useful guide: https://forums.plex.tv/t/linux-tips/276247/15
+# NOTE: if media cannot be viewed, port-forward to container, access /web and claim server
 
 apiVersion: v1
 kind: PersistentVolume
@@ -73,7 +74,7 @@ metadata:
   labels:
     app: plex
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: plex

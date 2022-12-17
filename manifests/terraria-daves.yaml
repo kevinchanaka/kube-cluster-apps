@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: terraria-daves
+  namespace: default
+  labels:
+    app: terraria-daves
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: terraria-daves
+  template:
+    metadata:
+      labels:
+        app: terraria-daves
+    spec:
+      containers:
+      - name: terraria
+        image: kevinchanaka/terraria:latest
+        ports:
+        - containerPort: 7777
+        volumeMounts:
+        - name: terraria-data
+          mountPath: /app/data
+        - name: terraria-config
+          mountPath: /app/data/config/serverconfig.txt
+          subPath: serverconfig.txt
+      volumes:
+      - name: terraria-data
+        persistentVolumeClaim:
+          claimName: terraria-daves
+      - name: terraria-config
+        configMap:
+          items:
+          - key: serverconfig.txt
+            path: serverconfig.txt
+          name: terraria-daves-config
+        
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: terraria-daves
+  namespace: default
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: terraria-daves
+  namespace: default
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.50.163
+  selector:
+    app: terraria-daves
+  ports:
+    - protocol: TCP
+      port: 7777
