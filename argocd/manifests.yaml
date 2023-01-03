@@ -96,7 +96,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: terraria
+  name: terraria-daves
   namespace: argocd
 spec:
   destination:
@@ -108,7 +108,26 @@ spec:
     repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
     directory:
-      include: "terraria.yaml"
+      include: "terraria-daves.yaml"
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: terraria-un-spacey
+  namespace: argocd
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: manifests
+    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    directory:
+      include: "terraria-un-spacey.yaml"
 
 ---
 

@@ -1,3 +1,18 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: terraria
+  namespace: default
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +21,7 @@ metadata:
   labels:
     app: terraria
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: terraria
@@ -21,37 +36,22 @@ spec:
         ports:
         - containerPort: 7777
         volumeMounts:
-        - name: terraria-data
+        - name: data
           mountPath: /app/data
-        - name: terraria-config
+        - name: config
           mountPath: /app/data/config/serverconfig.txt
           subPath: serverconfig.txt
       volumes:
-      - name: terraria-data
+      - name: data
         persistentVolumeClaim:
           claimName: terraria
-      - name: terraria-config
+      - name: config
         configMap:
           items:
           - key: serverconfig.txt
             path: serverconfig.txt
-          name: terraria-config
+          name: terraria
         
----
-
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: terraria
-  namespace: default
-spec:
-  storageClassName: nfs-client
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 1Gi
-
 ---
 
 apiVersion: v1
