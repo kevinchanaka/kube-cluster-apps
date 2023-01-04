@@ -3,7 +3,7 @@
 
 nfs-subdir-external-provisioner:
   nfs:
-    server: freenas.local
+    server: truenas.lab.kevinf.xyz
     path: /mnt/NASPool/data/volumes
   storageClass:
     reclaimPolicy: Delete

@@ -8,7 +8,7 @@ democratic-csi:
     name: "org.democratic-csi.iscsi"
 
   storageClasses:
-  - name: freenas-iscsi-csi
+  - name: truenas-iscsi-csi
     defaultClass: false
     reclaimPolicy: Retain
     volumeBindingMode: Immediate

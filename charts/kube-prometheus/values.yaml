@@ -42,7 +42,7 @@ kube-prometheus-stack:
           metadata:
             name: kp
           spec:
-            storageClassName: freenas-iscsi-csi
+            storageClassName: truenas-iscsi-csi
             accessModes:
             - ReadWriteOnce
             resources:
@@ -114,7 +114,7 @@ kube-prometheus-stack:
           metadata:
             name: kp
           spec:
-            storageClassName: freenas-iscsi-csi
+            storageClassName: truenas-iscsi-csi
             accessModes: 
             - ReadWriteOnce
             resources:

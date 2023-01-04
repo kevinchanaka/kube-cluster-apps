@@ -16,7 +16,7 @@ spec:
     namespace: default
   nfs:
     path: /mnt/NASPool/data/media/transmission
-    server: freenas.local 
+    server: truenas.lab.kevinf.xyz
 
 ---
 
