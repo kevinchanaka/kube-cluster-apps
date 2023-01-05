@@ -5,6 +5,8 @@
 # helm install -n cert-manager -f cert-manager.yaml cert-manager jetstack/cert-manager --version v1.6.0
 
 cert-manager:
+  installCRDs: true
+
   prometheus:
     enabled: true
     servicemonitor: 
