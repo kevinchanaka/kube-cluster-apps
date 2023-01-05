@@ -21,6 +21,9 @@ kubectl create secret generic sagemcom-router-reboot \
     --from-literal=ROUTER_USERNAME=${ROUTER_USERNAME} \
     --from-literal=ROUTER_PASSWORD=${ROUTER_PASSWORD}
 
+kubectl create secret generic -n cert-manager cloudflare-api-token \
+    --from-literal=token=${CLOUDFLARE_API_TOKEN}
+
 envsubst < democratic-csi.yaml > driver-config-file.yaml
 
 kubectl create secret generic zfs-iscsi-democratic-csi-driver-config \
