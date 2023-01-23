@@ -46,6 +46,29 @@ spec:
 
 ---
 
+# MetalLB configuration
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: default
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.168.50.160-192.168.50.170
+
+---
+
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: default
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - default
+
+---
+
 # Fluent-bit configmap to forward logs to Loki
 apiVersion: v1
 kind: ConfigMap
