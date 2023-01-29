@@ -123,8 +123,8 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: manifests
+    path: manifests/misc
     repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
     directory:
-      include: "misc.yaml"
+      include: "*"

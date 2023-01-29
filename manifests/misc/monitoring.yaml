@@ -1,0 +1,86 @@
+# Fluent-bit configmap to forward logs to Loki
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit
+  namespace: monitoring
+data:
+  custom_parsers.conf: |
+    [PARSER]
+        Name docker_no_time
+        Format json
+        Time_Keep Off
+        Time_Key time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L
+
+    [PARSER]
+        Name cri
+        Format regex
+        Regex ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<message>.*)$
+        Time_Key    time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+
+  fluent-bit.conf: |
+    [SERVICE]
+        Flush 1
+        Daemon Off
+        Log_Level info
+        Parsers_File parsers.conf
+        Parsers_File custom_parsers.conf
+        HTTP_Server On
+        HTTP_Listen 0.0.0.0
+        HTTP_Port 2020
+
+    [INPUT]
+        Name tail
+        Path /var/log/containers/*.log
+        Parser cri
+        Tag kube.*
+        Mem_Buf_Limit 5MB
+        Skip_Long_Lines On
+
+    [INPUT]
+        Name systemd
+        Path /var/log/journal
+        Tag host.*
+        Systemd_Filter _SYSTEMD_UNIT=kubelet.service
+        Read_From_Tail On
+
+    [FILTER]
+        Name kubernetes
+        Match kube.*
+        Merge_Log On
+        Keep_Log Off
+        K8S-Logging.Parser On
+        K8S-Logging.Exclude On
+
+    [OUTPUT]
+        Name grafana-loki
+        Match *
+        Url http://loki:3100/api/prom/push
+        TenantID ""
+        BatchWait 1
+        BatchSize 1048576
+        Labels {job="fluent-bit"}
+        RemoveKeys kubernetes,stream,logtag
+        DropSingleKey true
+        AutoKubernetesLabels false
+        LabelMapPath /fluent-bit/etc/labelmap.json
+        LineFormat json
+        LogLevel warn
+  
+  labelmap.json: |-
+    {
+      "kubernetes": {
+        "container_name": "container",
+        "host": "node",
+        "labels": {
+          "app": "app",
+          "release": "release"
+        },
+        "namespace_name": "namespace",
+        "pod_name": "instance"
+      },
+      "stream": "stream",
+      "logtag": "logtag"
+    }

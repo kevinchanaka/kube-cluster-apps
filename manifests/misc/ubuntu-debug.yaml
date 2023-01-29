@@ -1,0 +1,116 @@
+# Test ubuntu pod and volumes for troubleshooting
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ubuntu-debug-media
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 1Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: ubuntu-debug-media
+    namespace: default
+  nfs:
+    path: /mnt/NASPool/data/media
+    server: truenas.lab.kevinf.xyz
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  volumeMode: Filesystem
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ubuntu-debug-volumes
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 1Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: ubuntu-debug-volumes
+    namespace: default
+  nfs:
+    path: /mnt/NASPool/data/volumes
+    server: truenas.lab.kevinf.xyz
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  volumeMode: Filesystem
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ubuntu-debug-media
+  namespace: default
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: ""
+  volumeMode: Filesystem
+  volumeName: ubuntu-debug-media
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ubuntu-debug-volumes
+  namespace: default
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: ""
+  volumeMode: Filesystem
+  volumeName: ubuntu-debug-volumes
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubuntu-debug
+  namespace: default
+  labels:
+    app: ubuntu-debug
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ubuntu-debug
+  template:
+    metadata:
+      labels:
+        app: ubuntu-debug
+    spec:
+      containers:
+      - name: ubuntu-debug
+        image: kevinchanaka/ubuntu-user:latest
+        env:
+        - name: DEBIAN_FRONTEND
+          value: noninteractive
+        volumeMounts:
+        - name: media
+          mountPath: /home/ubuntu/media
+        - name: volumes
+          mountPath: /home/ubuntu/volumes
+      volumes:
+      - name: media
+        persistentVolumeClaim:
+          claimName: ubuntu-debug-media
+      - name: volumes
+        persistentVolumeClaim:
+          claimName: ubuntu-debug-volumes
