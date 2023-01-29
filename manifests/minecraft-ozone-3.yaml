@@ -122,3 +122,36 @@ spec:
       - name: minecraft-data
         persistentVolumeClaim:
           claimName: minecraft-ozone-3
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: minecraft-restart
+  namespace: default
+spec:
+  schedule: "30 3 * * *"
+  failedJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: kubectl
+            image: bitnami/kubectl
+            env:
+            - name: DEPLOYMENT_NAME
+              value: minecraft-ozone-3
+            command: ["/bin/bash"]
+            args: ["/app/restart.sh"]
+            volumeMounts:
+            - name: script
+              mountPath: /app
+          volumes:
+          - name: script
+            configMap:
+              name: scaler
+          restartPolicy: OnFailure
+          serviceAccountName: scaler

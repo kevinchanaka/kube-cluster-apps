@@ -67,3 +67,36 @@ spec:
   ports:
     - protocol: TCP
       port: 7777
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: terraria-un-spacey-restart
+  namespace: default
+spec:
+  schedule: "30 3 * * 3"
+  failedJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: kubectl
+            image: bitnami/kubectl
+            env:
+            - name: DEPLOYMENT_NAME
+              value: terraria-un-spacey
+            command: ["/bin/bash"]
+            args: ["/app/restart.sh"]
+            volumeMounts:
+            - name: script
+              mountPath: /app
+          volumes:
+          - name: script
+            configMap:
+              name: scaler
+          restartPolicy: OnFailure
+          serviceAccountName: scaler
