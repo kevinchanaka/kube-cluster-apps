@@ -76,7 +76,7 @@ metadata:
   name: terraria-daves-restart
   namespace: default
 spec:
-  schedule: "30 3 * * 3"
+  schedule: "30 3 * * *"
   failedJobsHistoryLimit: 3
   successfulJobsHistoryLimit: 1
   jobTemplate:
