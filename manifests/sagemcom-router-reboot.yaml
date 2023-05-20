@@ -51,8 +51,9 @@ metadata:
   name: sagemcom-router-reboot
   namespace: default
 spec:
-  schedule: "30 4 * * 3"
-  failedJobsHistoryLimit: 3
+  schedule: "30 4 * * 1,3,5"
+  startingDeadlineSeconds: 300
+  failedJobsHistoryLimit: 1
   successfulJobsHistoryLimit: 1
   jobTemplate:
     spec:

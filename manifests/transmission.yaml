@@ -74,8 +74,10 @@ spec:
         env:
         - name: TZ
           value: Australia/Sydney
-        - name: TRANSMISSION_WEB_HOME
-          value: /flood-for-transmission/
+        - name: PGID
+          value: "1000"
+        - name: PUID
+          value: "1000"
         volumeMounts:
         - name: downloads
           mountPath: /downloads
