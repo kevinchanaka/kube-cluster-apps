@@ -27,8 +27,10 @@ spec:
         env:
         - name: TYPE
           value: "FORGE"
-        - name: FORGE_INSTALLER
-          value: "forge-1.12.2-14.23.5.2860.jar"
+        - name: VERSION
+          value: 1.12.2
+        - name: FORGE_VERSION
+          value: 14.23.5.2860
         - name: MEMORY
           value: "8G"
         - name: EULA
@@ -44,8 +46,7 @@ spec:
         - containerPort: 25565
         resources:
           requests:
-            memory: 8300Mi
-            cpu: "2"
+            memory: 8Gi
       volumes:
       - name: minecraft-data
         persistentVolumeClaim:

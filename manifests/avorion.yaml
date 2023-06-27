@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avorion 
+  namespace: default
+  labels:
+    app: avorion
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: avorion
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+  template:
+    metadata:
+      labels:
+        app: avorion
+    spec:
+      containers:
+      - name: avorion
+        image: rfvgyhn/avorion
+        stdin: true
+        tty: true
+        resources:
+          requests:
+            memory: 8Gi
+        volumeMounts:
+        - name: avorion-data
+          mountPath: /home/steam/.avorion/galaxies/avorion_galaxy
+        ports:
+        - containerPort: 27000
+          protocol: TCP
+        - containerPort: 27000
+          protocol: UDP
+        - containerPort: 27003
+          protocol: UDP
+        - containerPort: 27020
+          protocol: UDP
+        - containerPort: 27021
+          protocol: UDP
+      volumes:
+      - name: avorion-data
+        persistentVolumeClaim:
+          claimName: avorion
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: avorion
+  namespace: default
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: avorion
+  namespace: default
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.50.164
+  selector:
+    app: avorion
+  ports:
+    - name: tcp-27000
+      protocol: TCP
+      port: 27000
+    - name: udp-27000
+      protocol: UDP
+      port: 27000
+    - name: udp-27003
+      protocol: UDP
+      port: 27003
+    - name: udp-27020
+      protocol: UDP
+      port: 27020
+    - name: udp-27021
+      protocol: UDP
+      port: 27021
