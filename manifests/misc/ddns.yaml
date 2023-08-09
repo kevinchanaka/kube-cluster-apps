@@ -38,16 +38,17 @@ data:
       if [ "$DDNS_CURRENT_IP" != "$UPDATE_IP" ]; then
         log "Updating DNS record"
 
-        curl -s -X PUT "${API_ENDPOINT}/zones/${ZONE_ID}/dns_records/${ROOT_RULE_ID}/" \
+        curl --silent -X PUT "${API_ENDPOINT}/zones/${ZONE_ID}/dns_records/${ROOT_RULE_ID}/" \
           -H "Content-Type:application/json" \
           -H "Authorization: Bearer ${API_TOKEN}" \
           --data '{"type":"A", "name":"'${DOMAIN_ROOT}'", "content":"'${UPDATE_IP}'"}'
+        echo
 
-
-        curl -s -X PUT "${API_ENDPOINT}/zones/${ZONE_ID}/dns_records/${WILDCARD_RULE_ID}/" \
+        curl --silent -X PUT "${API_ENDPOINT}/zones/${ZONE_ID}/dns_records/${WILDCARD_RULE_ID}/" \
           -H "Content-Type:application/json" \
           -H "Authorization: Bearer ${API_TOKEN}" \
           --data '{"type":"A", "name":"'${DOMAIN_WILDCARD}'", "content":"'${UPDATE_IP}'"}'
+        echo
 
       else
         log "Public IP unchanged, skipping DNS record update"
