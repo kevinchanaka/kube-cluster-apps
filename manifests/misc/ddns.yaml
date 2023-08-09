@@ -1,0 +1,99 @@
+# App to perform dynamic DNS via Cloudflare
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflare-ddns
+  namespace: default
+data:
+  API_ENDPOINT: https://api.cloudflare.com/client/v4
+  ZONE_ID: ce0d4f1d277f698c1fc083c5732e1f4a
+  ROOT_RULE_ID: 840aa0e2a5a77f86924893b62fcf16fe
+  WILDCARD_RULE_ID: c5c89ec5d0b51d529f2a61268ef988b2
+  DOMAIN_ROOT: "kevinf.xyz"
+  DOMAIN_WILDCARD: "*.kevinf.xyz"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflare-ddns-script
+  namespace: default
+data:
+  cloudflare-ddns.sh: |
+    #!/bin/bash
+    
+    function log() {
+      echo "[`date`] $1"
+    }
+
+    while true; do
+      DDNS_CURRENT_IP=`dig +short $DOMAIN_ROOT`
+      UPDATE_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
+
+      log "Current public IP is $UPDATE_IP"
+      log "Public IP within DNS record is $DDNS_CURRENT_IP"      
+
+      if [ "$DDNS_CURRENT_IP" != "$UPDATE_IP" ]; then
+        log "Updating DNS record"
+
+        curl -s -X PUT "${API_ENDPOINT}/zones/${ZONE_ID}/dns_records/${ROOT_RULE_ID}/" \
+          -H "Content-Type:application/json" \
+          -H "Authorization: Bearer ${API_TOKEN}" \
+          --data '{"type":"A", "name":"'${DOMAIN_ROOT}'", "content":"'${UPDATE_IP}'"}'
+
+
+        curl -s -X PUT "${API_ENDPOINT}/zones/${ZONE_ID}/dns_records/${WILDCARD_RULE_ID}/" \
+          -H "Content-Type:application/json" \
+          -H "Authorization: Bearer ${API_TOKEN}" \
+          --data '{"type":"A", "name":"'${DOMAIN_WILDCARD}'", "content":"'${UPDATE_IP}'"}'
+
+      else
+        log "Public IP unchanged, skipping DNS record update"
+
+      fi
+
+      sleep 300
+    done
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflare-ddns
+  namespace: default
+  labels:
+    app: cloudflare-ddns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudflare-ddns
+  template:
+    metadata:
+      labels:
+        app: cloudflare-ddns
+    spec:
+      containers:
+      - name: ubuntu
+        image: kevinchanaka/ubuntu-user:latest
+        envFrom:
+        - configMapRef:
+            name: cloudflare-ddns
+        env:
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: cloudflare-api-token
+              key: token
+        command: ["/bin/bash"]
+        args: ["/app/cloudflare-ddns.sh"]
+        volumeMounts:
+        - name: script
+          mountPath: /app
+      volumes:
+      - name: script
+        configMap:
+          name: cloudflare-ddns-script
