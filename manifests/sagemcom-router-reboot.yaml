@@ -52,6 +52,7 @@ metadata:
   namespace: default
 spec:
   schedule: "30 4 * * 1,3,5"
+  timeZone: Australia/Sydney
   startingDeadlineSeconds: 300
   failedJobsHistoryLimit: 1
   successfulJobsHistoryLimit: 1
