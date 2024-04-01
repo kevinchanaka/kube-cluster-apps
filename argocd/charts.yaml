@@ -10,7 +10,7 @@ spec:
   project: default
   source:
     path: charts/cert-manager
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
 
 ---
@@ -27,7 +27,7 @@ spec:
   project: default
   source:
     path: charts/metallb
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
 
 ---
@@ -44,7 +44,7 @@ spec:
   project: default
   source:
     path: charts/ingress-nginx
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
 
 ---
@@ -61,7 +61,7 @@ spec:
   project: default
   source:
     path: charts/metrics-server
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
 
 ---
@@ -78,7 +78,7 @@ spec:
   project: default
   source:
     path: charts/nfs-provisioner
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
 
 ---
@@ -95,7 +95,7 @@ spec:
   project: default
   source:
     path: charts/kube-prometheus
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
 
 ---
@@ -112,5 +112,5 @@ spec:
   project: default
   source:
     path: charts/zfs-iscsi
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD

@@ -28,9 +28,7 @@ kubectl --kubeconfig /etc/kubernetes/admin.conf -n monitoring create secret gene
 rm -fr "$D"
 ```
 
-5. Login to ArgoCD UI and connect GitHub repository via SSH (requires GitHub SSH keys)
-
-6. Create ArgoCD application object, and sync app from UI
+5. Create ArgoCD application object, and sync app from UI
 
 ```bash
 kubectl apply -f applications.yaml

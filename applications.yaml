@@ -10,5 +10,5 @@ spec:
   project: default
   source:
     path: argocd
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD

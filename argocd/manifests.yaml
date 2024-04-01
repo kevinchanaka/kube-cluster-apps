@@ -10,7 +10,7 @@ spec:
   project: default
   source:
     path: manifests
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
     directory:
       include: "minecraft*.yaml"
@@ -29,7 +29,7 @@ spec:
   project: default
   source:
     path: manifests
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
     directory:
       include: "home-assistant.yaml"
@@ -48,7 +48,7 @@ spec:
   project: default
   source:
     path: manifests
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
     directory:
       include: "plex.yaml"
@@ -67,7 +67,7 @@ spec:
   project: default
   source:
     path: manifests
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
     directory:
       include: "sagemcom-router-reboot.yaml"
@@ -86,7 +86,7 @@ spec:
   project: default
   source:
     path: manifests
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
     directory:
       include: "transmission.yaml"
@@ -105,7 +105,7 @@ spec:
   project: default
   source:
     path: manifests
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
     directory:
       include: "terraria*.yaml"
@@ -124,7 +124,7 @@ spec:
   project: default
   source:
     path: manifests
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
     directory:
       include: "avorion.yaml"
@@ -143,7 +143,7 @@ spec:
   project: default
   source:
     path: manifests/misc
-    repoURL: git@github.com:kevinchanaka/kube-cluster-apps.git
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
     directory:
       include: "*"
