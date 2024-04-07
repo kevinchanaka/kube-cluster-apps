@@ -25,4 +25,4 @@ volumeSnapshotClasses: []
 driver:
   existingConfigSecret: zfs-iscsi-democratic-csi-driver-config
   config:
-    driver: freenas-iscsi
+    driver: freenas-api-iscsi
