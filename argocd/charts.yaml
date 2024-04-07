@@ -43,6 +43,12 @@ spec:
   destination:
     namespace: metallb-system
     server: https://kubernetes.default.svc
+  ignoreDifferences:
+  - group: "apiextensions.k8s.io"
+    kind: CustomResourceDefinition
+    name: bgppeers.metallb.io
+    jsonPointers:
+    - /spec/conversion/webhook/clientConfig/caBundle
 
 ---
 
@@ -121,21 +127,44 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kube-prometheus
+  name: kube-prometheus-stack
   namespace: argocd
 spec:
   project: default
   sources:
   - repoURL: https://prometheus-community.github.io/helm-charts
     chart: kube-prometheus-stack
-    targetRevision: 57.2.1
+    targetRevision: 58.0.0
     helm:
       releaseName: kube-prometheus-stack
+      skipCrds: true
       valueFiles:
       - $repo/values/kube-prometheus-stack.yaml
   - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
     ref: repo
+  destination:
+    namespace: monitoring
+    server: https://kubernetes.default.svc
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack-crds
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/prometheus-community/helm-charts.git
+    path: charts/kube-prometheus-stack/crds/crds
+    targetRevision: kube-prometheus-stack-58.0.0
+    directory:
+      recurse: true
+  syncPolicy:
+    syncOptions:
+    - Replace=true
   destination:
     namespace: monitoring
     server: https://kubernetes.default.svc
