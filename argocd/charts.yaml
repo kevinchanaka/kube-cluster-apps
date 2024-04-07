@@ -136,7 +136,7 @@ spec:
     chart: kube-prometheus-stack
     targetRevision: 58.0.0
     helm:
-      releaseName: kube-prometheus-stack
+      releaseName: kps
       skipCrds: true
       valueFiles:
       - $repo/values/kube-prometheus-stack.yaml
@@ -158,7 +158,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/prometheus-community/helm-charts.git
-    path: charts/kube-prometheus-stack/crds/crds
+    path: charts/kube-prometheus-stack/charts/crds/crds
     targetRevision: kube-prometheus-stack-58.0.0
     directory:
       recurse: true

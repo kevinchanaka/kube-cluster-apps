@@ -16,7 +16,7 @@ spec:
     name: plex-media
     namespace: default
   nfs:
-    path: /mnt/NASPool/data/media
+    path: /mnt/nas/files
     server: truenas.lab.kevinf.xyz
 
 ---
@@ -47,7 +47,7 @@ spec:
   storageClassName: iscsi
   resources:
     requests:
-      storage: 1Gi
+      storage: 2Gi
 
 ---
 

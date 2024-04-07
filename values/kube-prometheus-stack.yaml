@@ -1,6 +1,6 @@
 # https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack
 
-fullnameOverride: "kp"
+fullnameOverride: "kps"
 
 global:
   rbac:
@@ -36,7 +36,7 @@ alertmanager:
         apiVersion: v1
         kind: PersistentVolumeClaim
         metadata:
-          name: kp
+          name: kps
         spec:
           storageClassName: iscsi
           accessModes:
@@ -108,7 +108,7 @@ prometheus:
         apiVersion: v1
         kind: PersistentVolumeClaim
         metadata:
-          name: kp
+          name: kps
         spec:
           storageClassName: iscsi
           accessModes: 
