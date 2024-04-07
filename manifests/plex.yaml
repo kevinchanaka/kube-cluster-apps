@@ -44,7 +44,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: truenas-iscsi-csi
+  storageClassName: iscsi
   resources:
     requests:
       storage: 1Gi
@@ -59,7 +59,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: truenas-iscsi-csi
+  storageClassName: iscsi
   resources:
     requests:
       storage: 1Gi

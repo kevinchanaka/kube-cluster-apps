@@ -42,12 +42,12 @@ kube-prometheus-stack:
           metadata:
             name: kp
           spec:
-            storageClassName: truenas-iscsi-csi
+            storageClassName: iscsi
             accessModes:
             - ReadWriteOnce
             resources:
               requests:
-                storage: 128Mi
+                storage: 1Gi
 
   grafana:
     enabled: true
@@ -67,7 +67,7 @@ kube-prometheus-stack:
     persistence:
       enabled: true
       type: pvc
-      storageClassName: nfs-client
+      storageClassName: iscsi
       accessModes:
       - ReadWriteOnce
       size: 1Gi
@@ -114,7 +114,7 @@ kube-prometheus-stack:
           metadata:
             name: kp
           spec:
-            storageClassName: truenas-iscsi-csi
+            storageClassName: iscsi
             accessModes: 
             - ReadWriteOnce
             resources:

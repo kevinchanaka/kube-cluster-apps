@@ -1,0 +1,11 @@
+# https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner/blob/master/charts/nfs-subdir-external-provisioner
+
+nfs:
+  server: truenas.lab.kevinf.xyz
+  path: /mnt/nas/data
+storageClass:
+  name: nfs
+  reclaimPolicy: Delete
+  onDelete: retain
+  pathPattern: ${.PVC.name}
+  defaultClass: true

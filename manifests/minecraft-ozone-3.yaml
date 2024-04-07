@@ -60,7 +60,7 @@ metadata:
   name: minecraft-ozone-3
   namespace: default
 spec:
-  storageClassName: nfs-client
+  storageClassName: nfs
   accessModes:
     - ReadWriteMany
   resources:

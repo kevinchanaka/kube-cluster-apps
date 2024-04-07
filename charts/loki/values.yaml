@@ -27,7 +27,7 @@ loki:
     - ReadWriteOnce
     size: 1Gi
     annotations: {}
-    storageClassName: truenas-iscsi-csi
+    storageClassName: iscsi
 
   config:
     auth_enabled: false

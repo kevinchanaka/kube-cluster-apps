@@ -1,0 +1,16 @@
+# https://github.com/metallb/metallb/tree/main/charts/metallb
+
+crds:
+  enabled: true
+
+controller:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 25Mi
+
+speaker:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 25Mi

@@ -44,7 +44,7 @@ metadata:
   name: home-assistant
   namespace: default
 spec:
-  storageClassName: nfs-client
+  storageClassName: nfs
   accessModes:
     - ReadWriteMany
   resources:

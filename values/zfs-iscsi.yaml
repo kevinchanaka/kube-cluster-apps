@@ -1,0 +1,28 @@
+# https://github.com/democratic-csi/charts/tree/master/stable/democratic-csi
+
+csiDriver:
+  name: "org.democratic-csi.iscsi"
+
+storageClasses:
+- name: iscsi
+  defaultClass: false
+  reclaimPolicy: Retain
+  volumeBindingMode: Immediate
+  allowVolumeExpansion: true
+  parameters:
+    fsType: ext4
+
+  mountOptions: []
+  secrets:
+    provisioner-secret:
+    controller-publish-secret:
+    node-stage-secret:
+    node-publish-secret:
+    controller-expand-secret:
+
+volumeSnapshotClasses: []
+
+driver:
+  existingConfigSecret: zfs-iscsi-democratic-csi-driver-config
+  config:
+    driver: freenas-iscsi

@@ -4,14 +4,21 @@ metadata:
   name: cert-manager
   namespace: argocd
 spec:
+  project: default
+  sources:
+  - repoURL: https://charts.jetstack.io
+    chart: cert-manager
+    targetRevision: 1.14.4
+    helm:
+      releaseName: cert-manager
+      valueFiles:
+      - $repo/values/cert-manager.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
   destination:
     namespace: cert-manager
     server: https://kubernetes.default.svc
-  project: default
-  source:
-    path: charts/cert-manager
-    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
-    targetRevision: HEAD
 
 ---
 
@@ -21,14 +28,21 @@ metadata:
   name: metallb
   namespace: argocd
 spec:
+  project: default
+  sources:
+  - repoURL: https://metallb.github.io/metallb
+    chart: metallb
+    targetRevision: 0.14.4
+    helm:
+      releaseName: metallb
+      valueFiles:
+      - $repo/values/metallb.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
   destination:
     namespace: metallb-system
     server: https://kubernetes.default.svc
-  project: default
-  source:
-    path: charts/metallb
-    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
-    targetRevision: HEAD
 
 ---
 
@@ -38,14 +52,21 @@ metadata:
   name: ingress-nginx
   namespace: argocd
 spec:
+  project: default
+  sources:
+  - repoURL: https://kubernetes.github.io/ingress-nginx
+    chart: ingress-nginx
+    targetRevision: 4.10.0
+    helm:
+      releaseName: ingress-nginx
+      valueFiles:
+      - $repo/values/ingress-nginx.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
   destination:
     namespace: ingress-nginx
     server: https://kubernetes.default.svc
-  project: default
-  source:
-    path: charts/ingress-nginx
-    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
-    targetRevision: HEAD
 
 ---
 
@@ -55,14 +76,21 @@ metadata:
   name: metrics-server
   namespace: argocd
 spec:
+  project: default
+  sources:
+  - repoURL: https://kubernetes-sigs.github.io/metrics-server/
+    chart: metrics-server
+    targetRevision: 3.12.1
+    helm:
+      releaseName: metrics-server
+      valueFiles:
+      - $repo/values/metrics-server.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
   destination:
     namespace: kube-system
     server: https://kubernetes.default.svc
-  project: default
-  source:
-    path: charts/metrics-server
-    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
-    targetRevision: HEAD
 
 ---
 
@@ -72,14 +100,21 @@ metadata:
   name: nfs-subdir-external-provisioner
   namespace: argocd
 spec:
+  project: default
+  sources:
+  - repoURL: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+    chart: nfs-subdir-external-provisioner
+    targetRevision: 4.0.18
+    helm:
+      releaseName: nfs-subdir-external-provisioner
+      valueFiles:
+      - $repo/values/nfs-provisioner.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
   destination:
     namespace: kube-system
     server: https://kubernetes.default.svc
-  project: default
-  source:
-    path: charts/nfs-provisioner
-    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
-    targetRevision: HEAD
 
 ---
 
@@ -89,14 +124,21 @@ metadata:
   name: kube-prometheus
   namespace: argocd
 spec:
+  project: default
+  sources:
+  - repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 57.2.1
+    helm:
+      releaseName: kube-prometheus-stack
+      valueFiles:
+      - $repo/values/kube-prometheus-stack.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
   destination:
     namespace: monitoring
     server: https://kubernetes.default.svc
-  project: default
-  source:
-    path: charts/kube-prometheus
-    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
-    targetRevision: HEAD
 
 ---
 
@@ -106,11 +148,18 @@ metadata:
   name: zfs-iscsi
   namespace: argocd
 spec:
+  project: default
+  sources:
+  - repoURL: https://democratic-csi.github.io/charts/
+    chart: democratic-csi
+    targetRevision: 0.14.6
+    helm:
+      releaseName: zfs-iscsi
+      valueFiles:
+      - $repo/values/zfs-iscsi.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
   destination:
     namespace: democratic-csi
     server: https://kubernetes.default.svc
-  project: default
-  source:
-    path: charts/zfs-iscsi
-    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
-    targetRevision: HEAD

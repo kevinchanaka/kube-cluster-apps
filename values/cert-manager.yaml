@@ -1,0 +1,12 @@
+# https://github.com/cert-manager/cert-manager/blob/master/deploy/charts/cert-manager
+
+installCRDs: true
+
+prometheus:
+  enabled: false
+  servicemonitor: 
+    enabled: false
+    namespace: monitoring
+
+webhook:
+  timeoutSeconds: 4

@@ -4,7 +4,7 @@ metadata:
   name: terraria-daves
   namespace: default
 spec:
-  storageClassName: nfs-client
+  storageClassName: nfs
   accessModes:
     - ReadWriteMany
   resources:

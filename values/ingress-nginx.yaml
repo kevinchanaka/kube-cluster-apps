@@ -1,0 +1,10 @@
+# https://github.com/kubernetes/ingress-nginx/blob/main/charts/ingress-nginx
+
+controller:
+  service:
+    type: LoadBalancer
+    loadBalancerIP: "192.168.50.160"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 90Mi

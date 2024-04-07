@@ -1,0 +1,4 @@
+# https://github.com/kubernetes-sigs/metrics-server/blob/master/charts/metrics-server
+
+args:
+- --kubelet-insecure-tls
