@@ -1,6 +1,0 @@
-# Values file for metrics server
-# helm upgrade -i -n kube-system -f metrics-server.yaml metrics-server metrics-server/metrics-server
-
-metrics-server:
-  args:
-  - --kubelet-insecure-tls
