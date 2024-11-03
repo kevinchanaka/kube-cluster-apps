@@ -27,6 +27,9 @@ kubectl create secret generic -n cert-manager cloudflare-api-token \
 kubectl create secret generic -n default cloudflare-api-token \
     --from-literal=token=${CLOUDFLARE_API_TOKEN}
 
+kubectl create secret generic -n default valheim \
+    --from-literal=password=${VALHEIM_PASSWORD}
+
 envsubst < democratic-csi.yaml > driver-config-file.yaml
 
 kubectl create secret generic zfs-iscsi-democratic-csi-driver-config \

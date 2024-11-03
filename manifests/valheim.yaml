@@ -1,0 +1,124 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: valheim
+  namespace: default
+data:
+  PUID: "1000"
+  GUID: "1000"
+  TZ: Australia/Sydney
+  SERVER_PUBLIC: "false"
+  SERVER_NAME: "Big Kev's big server land"
+  WORLD_NAME: "Kev's dad's dog's birthday party"
+  BACKUPS_IF_IDLE: "false"
+  BACKUPS_IDLE_GRACE_PERIOD: "3900"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valheim
+  namespace: default
+  labels:
+    app: valheim
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: valheim
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+  template:
+    metadata:
+      labels:
+        app: valheim
+    spec:
+      containers:
+      - name: valheim
+        image: lloesche/valheim-server
+        envFrom:
+        - configMapRef:
+            name: valheim
+            optional: false
+        env:
+        - name: SERVER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: valheim
+              key: password
+        volumeMounts:
+        - name: valheim-data
+          mountPath: /opt/valheim
+        - name: valheim-config
+          mountPath: /config
+        resources:
+          requests:
+            memory: 4Gi
+        ports:
+        - containerPort: 2456
+        - containerPort: 2457
+        securityContext:
+          capabilities:
+            add: ["SYS_NICE"]
+      terminationGracePeriodSeconds: 300
+      volumes:
+      - name: valheim-data
+        persistentVolumeClaim:
+          claimName: valheim-data
+      - name: valheim-config
+        persistentVolumeClaim:
+          claimName: valheim-config
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: valheim-data
+  namespace: default
+spec:
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: valheim-config
+  namespace: default
+spec:
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: valheim
+  namespace: default
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.50.166
+  selector:
+    app: valheim
+  ports:
+    - protocol: UDP
+      name: udp-2456
+      port: 2456
+    - protocol: UDP
+      port: 2457
+      name: udp-2457
