@@ -8,7 +8,7 @@ spec:
   sources:
   - repoURL: https://charts.jetstack.io
     chart: cert-manager
-    targetRevision: 1.14.4
+    targetRevision: "1.*"
     helm:
       releaseName: cert-manager
       valueFiles:
@@ -32,7 +32,7 @@ spec:
   sources:
   - repoURL: https://metallb.github.io/metallb
     chart: metallb
-    targetRevision: 0.14.4
+    targetRevision: "0.14.*"
     helm:
       releaseName: metallb
       valueFiles:
@@ -62,7 +62,7 @@ spec:
   sources:
   - repoURL: https://kubernetes.github.io/ingress-nginx
     chart: ingress-nginx
-    targetRevision: 4.10.0
+    targetRevision: "4.*"
     helm:
       releaseName: ingress-nginx
       valueFiles:
@@ -86,7 +86,7 @@ spec:
   sources:
   - repoURL: https://kubernetes-sigs.github.io/metrics-server/
     chart: metrics-server
-    targetRevision: 3.12.1
+    targetRevision: "3.*"
     helm:
       releaseName: metrics-server
       valueFiles:
@@ -110,7 +110,7 @@ spec:
   sources:
   - repoURL: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
     chart: nfs-subdir-external-provisioner
-    targetRevision: 4.0.18
+    targetRevision: "4.*"
     helm:
       releaseName: nfs-subdir-external-provisioner
       valueFiles:
@@ -181,7 +181,7 @@ spec:
   sources:
   - repoURL: https://democratic-csi.github.io/charts/
     chart: democratic-csi
-    targetRevision: 0.14.6
+    targetRevision: "0.14.*"
     helm:
       releaseName: zfs-iscsi
       valueFiles:
