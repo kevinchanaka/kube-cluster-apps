@@ -4,7 +4,7 @@ Repository of resources deployed to Kubernetes via argocd
 
 ## Usage
 
-1. Deploy secrets by running bash script
+1. Deploy secrets by running bash script. This script can be re-run to add new secrets
 
 ```bash
 cd secrets && ./create-secrets.sh
@@ -31,3 +31,14 @@ rm -fr "$D"
 ```bash
 kubectl apply -f applications.yaml
 ```
+
+## Upgrade
+
+1. Upgrade ArgoCD if required. Check [here](https://github.com/argoproj/argo-helm/pkgs/container/argo-helm%2Fargo-cd) for available ArgoCD releases
+
+```bash
+helm repo update
+helm upgrade -n argocd argocd argo/argo-cd
+```
+
+2. Review releases links on relevant helm charts and update target revisions
