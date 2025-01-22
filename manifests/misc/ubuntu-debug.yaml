@@ -99,9 +99,6 @@ spec:
       containers:
       - name: ubuntu-debug
         image: kevinchanaka/ubuntu-user:latest
-        env:
-        - name: DEBIAN_FRONTEND
-          value: noninteractive
         volumeMounts:
         - name: data
           mountPath: /home/ubuntu/mount/data
