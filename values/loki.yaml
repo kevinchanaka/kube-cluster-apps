@@ -1,76 +1,88 @@
-# https://github.com/grafana/helm-charts/tree/main/charts/loki
+# https://github.com/grafana/loki/tree/main/production/helm/loki
 
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/ingress.class: "nginx" 
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-  hosts:
-  - host: loki.lab.kevinf.xyz
-    paths:
-    - /
-  tls:
-  - secretName: loki-tls
-    hosts:
-    - loki.lab.kevinf.xyz
+deploymentMode: SingleBinary
+resultsCache:
+  # default is 1024 bytes
+  allocatedMemory: 256
+  # default is 500MB, with limited memory keep this smaller
+  writebackSizeLimit: 10MB
+chunksCache:
+  # default is 8192 bytes
+  allocatedMemory: 256
+  # default is 500MB, with limited memory keep this smaller
+  writebackSizeLimit: 10MB
 
-rbac:
-  create: true
-  pspEnabled: false
+singleBinary:
+  replicas: 1
+  resources:
+    requests:
+      memory: 1Gi
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: iscsi
 
-persistence:
-  enabled: true
-  accessModes:
-  - ReadWriteOnce
-  size: 1Gi
-  annotations: {}
-  storageClassName: iscsi
-
-config:
+loki:
   auth_enabled: false
-  ingester:
-    chunk_idle_period: 3m
-    chunk_block_size: 262144
-    chunk_retain_period: 1m
-    max_transfer_retries: 0
-    lifecycler:
-      ring:
-        kvstore:
-          store: inmemory
-        replication_factor: 1
-  limits_config:
-    enforce_metric_name: false
-    reject_old_samples: true
-    reject_old_samples_max_age: 168h
-  schema_config:
+  commonConfig:
+    replication_factor: 1
+  schemaConfig:
     configs:
-    - from: "2020-10-24"
-      store: boltdb-shipper
-      object_store: filesystem
-      schema: v11
-      index:
-        prefix: index_
-        period: 24h
-  server:
-    http_listen_port: 3100
-  storage_config:
-    boltdb_shipper:
-      active_index_directory: /data/loki/boltdb-shipper-active
-      cache_location: /data/loki/boltdb-shipper-cache
-      cache_ttl: 24h         # Can be increased for faster performance over longer query periods, uses more disk space
-      shared_store: filesystem
+      - from: "2024-04-01"
+        store: tsdb
+        object_store: filesystem
+        schema: v13
+        index:
+          prefix: index_
+          period: 24h
+  storage:
+    bucketNames:
+      chunks: loki-chunks
+      ruler: loki-ruler
     filesystem:
-      directory: /data/loki/chunks
-  chunk_store_config:
-    max_look_back_period: 0s
-  table_manager:
-    retention_deletes_enabled: true
-    retention_period: 720h
+      directory: /var/loki/chunks
+  limits_config:
+    retention_period: 7d
+  ingester:
+    chunk_encoding: snappy
+  querier:
+    max_concurrent: 2
   compactor:
-    working_directory: /data/loki/boltdb-shipper-compactor
-    shared_store: filesystem
+    retention_enabled: true
+    delete_request_store: filesystem
 
-resources:
-  requests:
-    cpu: 100m
-    memory: 128Mi
+gateway:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    hosts:
+    - host: loki.lab.kevinf.xyz
+      paths:
+      - path: /
+        pathType: Prefix
+    tls:
+    - secretName: loki-tls
+      hosts:
+      - loki.lab.kevinf.xyz
+
+storage:
+  type: filesystem
+  filesystem:
+    chunks_directory: /var/loki/chunks
+    rules_directory: /var/loki/rules
+    admin_api_directory: /var/loki/admin
+
+test:
+  enabled: false
+
+lokiCanary:
+  enabled: false
+
+backend:
+  replicas: 0
+read:
+  replicas: 0
+write:
+  replicas: 0

@@ -177,6 +177,31 @@ spec:
 
 ---
 
+# Releases: https://github.com/grafana/loki/pkgs/container/helm-charts%2Floki
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://grafana.github.io/helm-charts
+    chart: loki
+    targetRevision: "6.*"
+    helm:
+      releaseName: loki
+      valueFiles:
+      - $repo/values/loki.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  destination:
+    namespace: monitoring
+    server: https://kubernetes.default.svc
+
+---
+
 # Releases: https://github.com/democratic-csi/charts/releases?q=democratic-csi&expanded=true
 apiVersion: argoproj.io/v1alpha1
 kind: Application
