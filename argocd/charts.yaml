@@ -202,6 +202,31 @@ spec:
 
 ---
 
+# Releases: https://github.com/grafana/loki/pkgs/container/helm-charts%2Floki
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fluent-bit
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://fluent.github.io/helm-charts
+    chart: fluent-bit
+    targetRevision: "0.*"
+    helm:
+      releaseName: fluent-bit
+      valueFiles:
+      - $repo/values/fluent-bit.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  destination:
+    namespace: monitoring
+    server: https://kubernetes.default.svc
+
+---
+
 # Releases: https://github.com/democratic-csi/charts/releases?q=democratic-csi&expanded=true
 apiVersion: argoproj.io/v1alpha1
 kind: Application

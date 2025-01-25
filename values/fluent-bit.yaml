@@ -1,18 +1,62 @@
 # https://github.com/fluent/helm-charts/blob/main/charts/fluent-bit
 
-image: 
-  repository: grafana/fluent-bit-plugin-loki
-  pullPolicy: Always
-  tag: 2.1.0-amd64
+args:
+- --workdir=/fluent-bit/etc
+- --config=/fluent-bit/etc/conf/fluent-bit.yaml
 
-existingConfigMap: fluent-bit
+config:
+  extraFiles:
+    fluent-bit.yaml: |
+      service:
+        flush: 1
+        daemon: off
+        log_level: info
+        parsers_file: parsers.conf
+        http_server: on
+        http_listen: "0.0.0.0"
+        http_port: 2020
 
-volumeMounts:
-- name: config
-  mountPath: /fluent-bit/etc
+      pipeline:
+        inputs:
+        - name: tail
+          path: /var/log/containers/*.log
+          multiline.parser: docker, cri
+          tag: kube.*
+          mem_buf_limit: "5MB"
+          skip_long_lines: on
+
+        filters:
+        - name: kubernetes
+          match: kube.*
+          merge_log: on
+          keep_log: off
+          k8s-logging.parser: on
+          k8s-logging.exclude: on
+
+        outputs:
+        - name: loki
+          match: kube.*
+          host: loki
+          port: 3100
+          remove_keys: time, kubernetes, stream, _p
+          labels:
+            job: fluent-bit
+          label_map_path: /fluent-bit/etc/conf/labelmap.json
+          drop_single_key: raw
+          line_format: json
+          log_level: warn
+
+    labelmap.json: |-
+      {
+        "kubernetes": {
+          "pod_name": "pod",
+          "container_name": "container",
+          "namespace_name": "namespace"
+        }
+      }
 
 tolerations:
-- key: node-role.kubernetes.io/master
+- key: node-role.kubernetes.io/control-plane
   operator: Exists
   effect: "NoSchedule"
 
