@@ -1,0 +1,43 @@
+# Cluster issuers used by cert manager to generate certificates
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    # You must replace this email address with your own.
+    # Let's Encrypt will use this to contact you about expiring
+    # certificates, and issues related to your account.
+    email: kevinchanaka1@gmail.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      # Secret resource that will be used to store the account's private key.
+      name: letsencrypt-prod
+    # Add a single challenge solver, DNS challenge
+    solvers:
+    - dns01:
+        cloudflare:
+          email: kevinchanaka1@gmail.com
+          apiTokenSecretRef:
+            name: cloudflare-api-token
+            key: token
+
+---
+
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    email: kevinchanaka1@gmail.com
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    solvers:
+    - dns01:
+        cloudflare:
+          email: kevinchanaka1@gmail.com
+          apiTokenSecretRef:
+            name: cloudflare-api-token
+            key: token
