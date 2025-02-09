@@ -42,7 +42,7 @@ loki:
     filesystem:
       directory: /var/loki/chunks
   limits_config:
-    retention_period: 7d
+    retention_period: 24h
   ingester:
     chunk_encoding: snappy
   querier:
