@@ -8,6 +8,11 @@ spec:
     namespace: default
     server: https://kubernetes.default.svc
   project: default
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
   source:
     path: manifests
     repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
@@ -84,6 +89,11 @@ spec:
     namespace: default
     server: https://kubernetes.default.svc
   project: default
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
   source:
     path: manifests
     repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
@@ -103,6 +113,11 @@ spec:
     namespace: default
     server: https://kubernetes.default.svc
   project: default
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
   source:
     path: manifests
     repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
@@ -122,6 +137,11 @@ spec:
     namespace: default
     server: https://kubernetes.default.svc
   project: default
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
   source:
     path: manifests
     repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
