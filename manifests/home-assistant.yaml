@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: home-assistant
-        image: ghcr.io/home-assistant/home-assistant:stable
+        image: ghcr.io/home-assistant/home-assistant:latest
         env:
         - name: TZ
           value: Australia/Sydney
@@ -92,3 +92,38 @@ spec:
               number: 8123
         path: /
         pathType: Prefix
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: home-assistant-restart
+  namespace: default
+spec:
+  schedule: "30 3 * * 1"
+  timeZone: Australia/Sydney
+  startingDeadlineSeconds: 300
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 0
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: kubectl
+            image: bitnami/kubectl
+            env:
+            - name: DEPLOYMENT_NAME
+              value: terraria-un-spacey
+            command: ["/bin/bash"]
+            args: ["/app/restart.sh"]
+            volumeMounts:
+            - name: script
+              mountPath: /app
+          volumes:
+          - name: script
+            configMap:
+              name: scaler
+          restartPolicy: OnFailure
+          serviceAccountName: scaler
