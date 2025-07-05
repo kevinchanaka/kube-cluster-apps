@@ -9,6 +9,7 @@ namespaces=(
     "ingress-nginx" 
     "metallb-system"
     "monitoring"
+    "nvidia-device-plugin"
 )
 
 # Creating namespaces used by cluster

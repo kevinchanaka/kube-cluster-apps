@@ -249,3 +249,30 @@ spec:
   destination:
     namespace: democratic-csi
     server: https://kubernetes.default.svc
+
+---
+
+# Releases: https://github.com/NVIDIA/k8s-device-plugin/releases
+# NOTE: need to manually label GPU nodes
+# kubectl label node <NODE_NAME> nvidia.com/gpu.present=true
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nvidia-device-plugin
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://nvidia.github.io/k8s-device-plugin
+    chart: nvidia-device-plugin
+    targetRevision: "0.17.*"
+    helm:
+      releaseName: nvdp
+      valueFiles:
+      - $repo/values/nvidia-device-plugin.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  destination:
+    namespace: nvidia-device-plugin
+    server: https://kubernetes.default.svc
