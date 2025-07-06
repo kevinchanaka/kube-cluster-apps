@@ -1,0 +1,171 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  namespace: default
+  labels:
+    app: ollama
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ollama
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+  template:
+    metadata:
+      labels:
+        app: ollama
+    spec:
+      runtimeClassName: nvidia
+      containers:
+      - name: ollama
+        image: ollama/ollama
+        resources:
+          requests:
+            memory: 2Gi
+          limits:
+            nvidia.com/gpu: 1
+        env:
+        - name: OLLAMA_KEEP_ALIVE
+          value: 20m
+        ports:
+        - containerPort: 11434
+          protocol: TCP
+        volumeMounts:
+        - name: ollama
+          mountPath: /root/.ollama
+      volumes:
+      - name: ollama
+        persistentVolumeClaim:
+          claimName: ollama
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama
+  namespace: default
+spec:
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+  namespace: default
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.50.170
+  selector:
+    app: ollama
+  ports:
+    - protocol: TCP
+      port: 11434
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: open-webui
+  namespace: default
+  labels:
+    app: open-webui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: open-webui
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+  template:
+    metadata:
+      labels:
+        app: open-webui
+    spec:
+      containers:
+      - name: open-webui
+        image: ghcr.io/open-webui/open-webui:main
+        env:
+        - name: OLLAMA_BASE_URL
+          value: http://ollama:11434
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        volumeMounts:
+        - name: open-webui
+          mountPath: /app/backend/data
+      volumes:
+      - name: open-webui
+        persistentVolumeClaim:
+          claimName: open-webui
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: open-webui
+  namespace: default
+spec:
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: open-webui
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: open-webui
+  ports:
+    - protocol: TCP
+      port: 8080
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: open-webui
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+    - openwebui.lab.kevinf.xyz
+    secretName: open-webui-tls
+  rules:
+  - host: openwebui.lab.kevinf.xyz
+    http:
+      paths:
+      - backend:
+          service:
+            name: open-webui
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix

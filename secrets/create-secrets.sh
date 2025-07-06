@@ -39,3 +39,6 @@ kubectl create secret generic zfs-iscsi-democratic-csi-driver-config \
 rm driver-config-file.yaml
 
 envsubst < terraria-config.yaml | kubectl apply -f -
+
+kubectl create secret generic huggingface-token \
+    --from-literal=token=${HUGGINGFACE_ACCESS_TOKEN} \

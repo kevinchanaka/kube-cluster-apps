@@ -42,3 +42,19 @@ helm upgrade -n argocd argocd argo/argo-cd
 ```
 
 2. Review releases links on relevant helm charts and update target revisions
+
+## Dev Workflow
+
+1. Pull helm chart from relevant location, create values file in the `values` folder and deploy manually
+```
+helm repo add <APP_NAME> <APP_REPO>
+helm upgrade -i <APP> <CHART> -n <NAMESPACE> -f <VALUES_FILE>
+```
+
+2. Test new application. If everything works as expected, delete the helm application and remove chart source
+```
+helm uninstall <APP> -n <NAMESPACE>
+helm repo remove <APP_NAME>
+```
+
+3. Redeploy app by creating ArgoCD application object, commit changes to repositoriy and sync app via UI

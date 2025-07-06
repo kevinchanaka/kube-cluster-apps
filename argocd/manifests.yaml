@@ -130,6 +130,30 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  name: ai
+  namespace: argocd
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
+  source:
+    path: manifests
+    repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    directory:
+      include: "ai.yaml"
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
   name: valheim
   namespace: argocd
 spec:
