@@ -39,8 +39,7 @@ config:
           host: loki
           port: 3100
           remove_keys: time, kubernetes, stream, _p
-          labels:
-            job: fluent-bit
+          labels: job=fluent-bit
           label_map_path: /fluent-bit/etc/conf/labelmap.json
           drop_single_key: raw
           line_format: json

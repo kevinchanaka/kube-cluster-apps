@@ -26,3 +26,8 @@ driver:
   existingConfigSecret: zfs-iscsi-democratic-csi-driver-config
   config:
     driver: freenas-api-iscsi
+
+controller:
+  driver:
+    image:
+      tag: next
