@@ -1,0 +1,47 @@
+# Releases: https://github.com/kubernetes-sigs/metrics-server/releases?q=metrics-server-helm-chart&expanded=true
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flannel
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://flannel-io.github.io/flannel/
+    chart: flannel
+    targetRevision: "v0.*"
+    helm:
+      releaseName: flannel
+      valueFiles:
+      - $repo/values/flannel.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  destination:
+    namespace: kube-system
+    server: https://kubernetes.default.svc
+
+---
+
+# Releases: https://github.com/kubernetes-sigs/metrics-server/releases?q=metrics-server-helm-chart&expanded=true
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-server
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://kubernetes-sigs.github.io/metrics-server/
+    chart: metrics-server
+    targetRevision: "3.*"
+    helm:
+      releaseName: metrics-server
+      valueFiles:
+      - $repo/values/metrics-server.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  destination:
+    namespace: kube-system
+    server: https://kubernetes.default.svc

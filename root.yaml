@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: applications
+  name: root
   namespace: argocd
 spec:
   destination:
@@ -9,9 +9,6 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: argocd
+    path: apps
     repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
-  syncPolicy:
-    automated:
-      selfHeal: true
