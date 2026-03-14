@@ -1,3 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: oci://ghcr.io/argoproj/argo-helm
+    chart: argo-cd
+    targetRevision: "9.4.*"
+    helm:
+      releaseName: argocd
+      valueFiles:
+      - $repo/values/argocd.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  syncPolicy:
+    syncOptions:
+    - ServerSideApply=true
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+
+---
+
 # Releases: https://github.com/kubernetes-sigs/metrics-server/releases?q=metrics-server-helm-chart&expanded=true
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -201,7 +228,7 @@ metadata:
 spec:
   project: default
   sources:
-  - repoURL: ghcr.io/sergelogvinov/charts/proxmox-csi-plugin
+  - repoURL: ghcr.io/sergelogvinov/charts
     chart: proxmox-csi-plugin
     targetRevision: "0.*"
     helm:
