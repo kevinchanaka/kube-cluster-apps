@@ -1,0 +1,58 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: cloudflare-api-cert-manager-token
+  namespace: cert-manager
+spec:
+  secretStoreRef:
+    name: infisical
+    kind: ClusterSecretStore 
+  refreshPolicy: Periodic
+  refreshInterval: "24h"
+  target:
+    creationPolicy: Owner
+    deletionPolicy: Retain
+  data:
+    - secretKey: token
+      remoteRef:
+        key: cloudflare-api-cert-manager-token
+
+---
+
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    email: kevinchanaka1@gmail.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - dns01:
+        cloudflare:
+          email: kevinchanaka1@gmail.com
+          apiTokenSecretRef:
+            name: cloudflare-api-cert-manager-token
+            key: token
+
+---
+
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    email: kevinchanaka1@gmail.com
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    solvers:
+    - dns01:
+        cloudflare:
+          email: kevinchanaka1@gmail.com
+          apiTokenSecretRef:
+            name: cloudflare-api-token
+            key: token

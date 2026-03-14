@@ -73,6 +73,92 @@ spec:
   syncPolicy:
     syncOptions:
     - ServerSideApply=true
+    - CreateNamespace=true
   destination:
-    namespace: kube-system
+    namespace: external-secrets
     server: https://kubernetes.default.svc
+
+---
+
+# Releases: https://github.com/cert-manager/cert-manager/releases
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://charts.jetstack.io
+    chart: cert-manager
+    targetRevision: "1.*"
+    helm:
+      releaseName: cert-manager
+      valueFiles:
+      - $repo/values/cert-manager.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+  destination:
+    namespace: cert-manager
+    server: https://kubernetes.default.svc
+
+---
+
+# Releases: https://github.com/metallb/metallb/releases?q=metallb-chart&expanded=true
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metallb
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://metallb.github.io/metallb
+    chart: metallb
+    targetRevision: "0.15.*"
+    helm:
+      releaseName: metallb
+      valueFiles:
+      - $repo/values/metallb.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+  destination:
+    namespace: metallb-system
+    server: https://kubernetes.default.svc
+
+---
+
+# Releases: https://hub.docker.com/r/envoyproxy/gateway-helm/tags
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: envoy-gateway
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: oci://docker.io/envoyproxy
+    chart: gateway-helm
+    targetRevision: "1.*"
+    helm:
+      releaseName: eg
+      valueFiles:
+      - $repo/values/envoy-gateway.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  destination:
+    namespace: envoy-gateway-system
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
