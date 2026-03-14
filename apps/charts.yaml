@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   sources:
-  - repoURL: oci://ghcr.io/argoproj/argo-helm
+  - repoURL: ghcr.io/argoproj/argo-helm
     chart: argo-cd
     targetRevision: "9.4.*"
     helm:
@@ -181,7 +181,7 @@ spec:
     targetRevision: HEAD
     ref: repo
   destination:
-    namespace: envoy-gateway-system
+    namespace: eg-system
     server: https://kubernetes.default.svc
   syncPolicy:
     syncOptions:
@@ -211,7 +211,7 @@ spec:
     targetRevision: HEAD
     ref: repo
   destination:
-    namespace: envoy-gateway-system
+    namespace: eg-system
     server: https://kubernetes.default.svc
   syncPolicy:
     syncOptions:

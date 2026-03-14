@@ -1,0 +1,41 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: eg
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+
+---
+
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: eg
+  namespace: eg-system
+spec:
+  gatewayClassName: eg
+  listeners: # Wildcard certs are temporary until Gateway API ListenerSet is mature
+  - protocol: HTTPS
+    port: 443
+    name: https
+    hostname: "*.lab.kevinf.xyz"
+    allowedRoutes:
+      namespaces:
+        from: All
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: eg-wildcard-tls
+        kind: Secret
+  - protocol: HTTPS
+    port: 443
+    name: https
+    hostname: "*.lab.kevinf.xyz"
+    allowedRoutes:
+      namespaces:
+        from: All
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: eg-double-wildcard-tls
+        kind: Secret

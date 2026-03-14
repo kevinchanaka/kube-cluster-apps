@@ -1,3 +1,33 @@
+global:
+  domain: argocd.lab.kevinf.xyz
+
 configs:
   params:
     create: true
+
+server:
+  service:
+    servicePortHttpsAppProtocol: kubernetes.io/h2c
+  httproute:
+    enabled: true
+    parentRefs:
+    - name: eg
+      namespace: eg-system
+      sectionName: https
+    hostnames:
+    - argocd.lab.kevinf.xyz
+  grpcroute:
+    enabled: true
+    parentRefs:
+    - name: eg
+      namespace: eg-system
+      sectionName: https
+    hostnames:
+    - grpc.argocd.lab.kevinf.xyz
+  backendTLSPolicy:
+    enabled: true
+    targetRefs:
+    - group: ""
+      kind: Service
+      name: argocd-server
+      sectionName: https
