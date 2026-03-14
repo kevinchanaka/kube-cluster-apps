@@ -17,6 +17,9 @@ spec:
   - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
     ref: repo
+  syncPolicy:
+    syncOptions:
+    - ServerSideApply=true
   destination:
     namespace: kube-system
     server: https://kubernetes.default.svc
@@ -42,6 +45,34 @@ spec:
   - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
     targetRevision: HEAD
     ref: repo
+  destination:
+    namespace: kube-system
+    server: https://kubernetes.default.svc
+
+---
+
+# Releases: https://github.com/external-secrets/external-secrets/releases?q=helm-chart&expanded=true
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: external-secrets
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://charts.external-secrets.io
+    chart: external-secrets
+    targetRevision: "2.*"
+    helm:
+      releaseName: external-secrets
+      valueFiles:
+      - $repo/values/external-secrets.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  syncPolicy:
+    syncOptions:
+    - ServerSideApply=true
   destination:
     namespace: kube-system
     server: https://kubernetes.default.svc
