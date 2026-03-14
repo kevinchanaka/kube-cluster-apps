@@ -1,0 +1,6 @@
+# Standalone cluster setup: https://github.com/sergelogvinov/proxmox-csi-plugin/issues/328
+# Need to label all worker nodes with:
+# topology.kubernetes.io/region=<CLUSTER_NAME>
+# topology.kubernetes.io/zone=<PROXMOX_NODE_NAME>
+
+existingConfigSecret: proxmox-csi-plugin

@@ -7,8 +7,7 @@ spec:
   secretStoreRef:
     name: infisical
     kind: ClusterSecretStore 
-  refreshPolicy: Periodic
-  refreshInterval: "24h"
+  refreshPolicy: OnChange
   target:
     creationPolicy: Owner
     deletionPolicy: Retain
