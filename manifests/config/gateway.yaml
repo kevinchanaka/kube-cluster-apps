@@ -12,30 +12,32 @@ kind: Gateway
 metadata:
   name: eg
   namespace: eg-system
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   gatewayClassName: eg
   listeners: # Wildcard certs are temporary until Gateway API ListenerSet is mature
   - protocol: HTTPS
     port: 443
-    name: https
-    hostname: "*.lab.kevinf.xyz"
+    name: argocd
+    hostname: "argocd.lab.kevinf.xyz"
     allowedRoutes:
       namespaces:
         from: All
     tls:
       mode: Terminate
       certificateRefs:
-      - name: eg-wildcard-tls
+      - name: eg-argocd-tls
         kind: Secret
   - protocol: HTTPS
     port: 443
-    name: https
-    hostname: "*.lab.kevinf.xyz"
+    name: argocd-grpc
+    hostname: "grpc.argocd.lab.kevinf.xyz"
     allowedRoutes:
       namespaces:
         from: All
     tls:
       mode: Terminate
       certificateRefs:
-      - name: eg-double-wildcard-tls
+      - name: eg-argocd-grpc-tls
         kind: Secret

@@ -4,6 +4,7 @@ global:
 configs:
   params:
     create: true
+    server.insecure: "true"
 
 server:
   service:
@@ -13,21 +14,34 @@ server:
     parentRefs:
     - name: eg
       namespace: eg-system
-      sectionName: https
+      sectionName: argocd
     hostnames:
     - argocd.lab.kevinf.xyz
+    rules:
+    - matches:
+      - path:
+          type: PathPrefix
+          value: /
+      backendRefs:
+      - group: ""
+        kind: Service
+        name: argocd-server
+        port: 80
+        weight: 1
   grpcroute:
     enabled: true
     parentRefs:
     - name: eg
       namespace: eg-system
-      sectionName: https
+      sectionName: argocd-grpc
     hostnames:
     - grpc.argocd.lab.kevinf.xyz
+    rules:
+    - backendRefs:
+      - group: ""
+        kind: Service
+        name: argocd-server
+        port: 443
+        weight: 1
   backendTLSPolicy:
-    enabled: true
-    targetRefs:
-    - group: ""
-      kind: Service
-      name: argocd-server
-      sectionName: https
+    enabled: false

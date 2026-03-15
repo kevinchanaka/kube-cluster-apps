@@ -8,10 +8,8 @@ metadata:
 data:
   API_ENDPOINT: https://api.cloudflare.com/client/v4
   ZONE_ID: ce0d4f1d277f698c1fc083c5732e1f4a
-  ROOT_RULE_ID: 840aa0e2a5a77f86924893b62fcf16fe
-  WILDCARD_RULE_ID: c5c89ec5d0b51d529f2a61268ef988b2
-  DOMAIN_ROOT: "kevinf.xyz"
-  DOMAIN_WILDCARD: "*.kevinf.xyz"
+  DOMAIN: "mynetwork.kevinf.xyz"
+  RULE_ID: "840aa0e2a5a77f86924893b62fcf16fe"
 
 ---
 
@@ -29,7 +27,7 @@ data:
     }
 
     while true; do
-      DDNS_CURRENT_IP=`dig +short $DOMAIN_ROOT`
+      DDNS_CURRENT_IP=`dig +short $DOMAIN`
       UPDATE_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
 
       log "Current public IP is $UPDATE_IP"
@@ -38,25 +36,38 @@ data:
       if [ "$DDNS_CURRENT_IP" != "$UPDATE_IP" ]; then
         log "Updating DNS record"
 
-        curl --silent -X PUT "${API_ENDPOINT}/zones/${ZONE_ID}/dns_records/${ROOT_RULE_ID}/" \
+        curl --silent -X PUT "${API_ENDPOINT}/zones/${ZONE_ID}/dns_records/${RULE_ID}/" \
           -H "Content-Type:application/json" \
           -H "Authorization: Bearer ${API_TOKEN}" \
-          --data '{"type":"A", "name":"'${DOMAIN_ROOT}'", "content":"'${UPDATE_IP}'"}'
-        echo
-
-        curl --silent -X PUT "${API_ENDPOINT}/zones/${ZONE_ID}/dns_records/${WILDCARD_RULE_ID}/" \
-          -H "Content-Type:application/json" \
-          -H "Authorization: Bearer ${API_TOKEN}" \
-          --data '{"type":"A", "name":"'${DOMAIN_WILDCARD}'", "content":"'${UPDATE_IP}'"}'
+          --data '{"type":"A", "name":"'${DOMAIN}'", "content":"'${UPDATE_IP}'"}'
         echo
 
       else
         log "Public IP unchanged, skipping DNS record update"
-
       fi
 
       sleep 300
     done
+
+---
+
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: cloudflare-api-ddns-token
+  namespace: default
+spec:
+  secretStoreRef:
+    name: infisical
+    kind: ClusterSecretStore 
+  refreshPolicy: OnChange
+  target:
+    creationPolicy: Owner
+    deletionPolicy: Retain
+  data:
+    - secretKey: token
+      remoteRef:
+        key: cloudflare-api-ddns-token
 
 ---
 
@@ -87,7 +98,7 @@ spec:
         - name: API_TOKEN
           valueFrom:
             secretKeyRef:
-              name: cloudflare-api-token
+              name: cloudflare-api-ddns-token
               key: token
         command: ["/bin/bash"]
         args: ["/app/cloudflare-ddns.sh"]
