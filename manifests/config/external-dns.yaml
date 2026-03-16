@@ -1,0 +1,17 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: cloudflare-api-external-dns-token
+  namespace: default
+spec:
+  secretStoreRef:
+    name: infisical
+    kind: ClusterSecretStore 
+  refreshPolicy: OnChange
+  target:
+    creationPolicy: Owner
+    deletionPolicy: Retain
+  data:
+    - secretKey: token
+      remoteRef:
+        key: cloudflare-api-external-dns-token

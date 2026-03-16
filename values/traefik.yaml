@@ -1,0 +1,19 @@
+ingressClass:
+  enabled: true
+  isDefaultClass: false
+  name: traefik
+
+providers:
+  kubernetesIngress:
+    enabled: true
+  kubernetesCRD:
+    enabled: true
+
+service:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.50.161
+
+metrics:
+  prometheus:
+    enabled: false
+

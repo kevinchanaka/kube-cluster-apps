@@ -267,3 +267,57 @@ spec:
   destination:
     namespace: monitoring
     server: https://kubernetes.default.svc
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: ghcr.io/traefik/helm/traefik
+    chart: traefik
+    targetRevision: "39.*"
+    helm:
+      releaseName: 
+      valueFiles:
+      - $repo/values/traefik.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+  destination:
+    namespace: traefik 
+    server: https://kubernetes.default.svc
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: external-dns
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://kubernetes-sigs.github.io/external-dns/
+    chart: external-dns
+    targetRevision: "1.*"
+    helm:
+      releaseName:
+      valueFiles:
+      - $repo/values/external-dns.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+  destination:
+    namespace: default 
+    server: https://kubernetes.default.svc
