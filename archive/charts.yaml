@@ -53,3 +53,130 @@ spec:
     syncOptions:
     - CreateNamespace=true
     - ServerSideApply=true
+
+---
+
+# Releases: https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner/releases
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nfs-subdir-external-provisioner
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+    chart: nfs-subdir-external-provisioner
+    targetRevision: "4.*"
+    helm:
+      releaseName: nfs-subdir-external-provisioner
+      valueFiles:
+      - $repo/values/nfs-provisioner.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  destination:
+    namespace: kube-system
+    server: https://kubernetes.default.svc
+
+---
+
+# Releases: https://github.com/grafana/loki/pkgs/container/helm-charts%2Floki
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://grafana.github.io/helm-charts
+    chart: loki
+    targetRevision: "6.*"
+    helm:
+      releaseName: loki
+      valueFiles:
+      - $repo/values/loki.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  destination:
+    namespace: monitoring
+    server: https://kubernetes.default.svc
+
+---
+
+# Releases: https://github.com/fluent/helm-charts/releases
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fluent-bit
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://fluent.github.io/helm-charts
+    chart: fluent-bit
+    targetRevision: "0.*"
+    helm:
+      releaseName: fluent-bit
+      valueFiles:
+      - $repo/values/fluent-bit.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  destination:
+    namespace: monitoring
+    server: https://kubernetes.default.svc
+
+---
+
+# Releases: https://github.com/democratic-csi/charts/releases?q=democratic-csi&expanded=true
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: zfs-iscsi
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://democratic-csi.github.io/charts/
+    chart: democratic-csi
+    targetRevision: "0.15.*"
+    helm:
+      releaseName: zfs-iscsi
+      valueFiles:
+      - $repo/values/zfs-iscsi.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  destination:
+    namespace: democratic-csi
+    server: https://kubernetes.default.svc
+
+---
+
+# Releases: https://github.com/NVIDIA/k8s-device-plugin/releases
+# NOTE: need to manually label GPU nodes
+# kubectl label node <NODE_NAME> nvidia.com/gpu.present=true
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nvidia-device-plugin
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://nvidia.github.io/k8s-device-plugin
+    chart: nvidia-device-plugin
+    targetRevision: "0.17.*"
+    helm:
+      releaseName: nvdp
+      valueFiles:
+      - $repo/values/nvidia-device-plugin.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
+  destination:
+    namespace: nvidia-device-plugin
+    server: https://kubernetes.default.svc

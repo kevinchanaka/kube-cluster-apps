@@ -201,12 +201,38 @@ spec:
   source:
     repoURL: https://github.com/prometheus-community/helm-charts.git
     path: charts/kube-prometheus-stack/charts/crds/crds
-    targetRevision: kube-prometheus-stack-82.10.3
+    targetRevision: kube-prometheus-stack-82.10.5
     directory:
       recurse: true
   syncPolicy:
     syncOptions:
     - Replace=true
+  destination:
+    namespace: monitoring
+    server: https://kubernetes.default.svc
+
+---
+
+# Releases: https://github.com/prometheus-community/helm-charts/pkgs/container/charts%2Fkube-prometheus-stack
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 82.10.5
+    helm:
+      releaseName: kps
+      skipCrds: true
+      valueFiles:
+      - $repo/values/kube-prometheus-stack.yaml
+  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
+    targetRevision: HEAD
+    ref: repo
   destination:
     namespace: monitoring
     server: https://kubernetes.default.svc

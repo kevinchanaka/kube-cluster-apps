@@ -11,9 +11,8 @@ providers:
 
 service:
   type: LoadBalancer
-  loadBalancerIP: 192.168.50.161
+  loadBalancerIP: 192.168.50.160
 
 metrics:
   prometheus:
     enabled: false
-

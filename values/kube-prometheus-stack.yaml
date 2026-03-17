@@ -2,10 +2,12 @@
 
 fullnameOverride: "kps"
 
+crds:
+  enabled: false
+
 global:
   rbac:
     create: true
-    pspEnabled: false
 
 defaultRules:
   create: true
@@ -13,9 +15,9 @@ defaultRules:
 alertmanager:
   ingress:
     enabled: true
+    ingressClassName: traefik
     annotations:
-      kubernetes.io/ingress.class: "nginx" 
-      cert-manager.io/cluster-issuer: "letsencrypt-prod"      
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
     hosts:
     - alertmanager.lab.kevinf.xyz
     paths:
@@ -38,7 +40,7 @@ alertmanager:
         metadata:
           name: kps
         spec:
-          storageClassName: iscsi
+          storageClassName: proxmox
           accessModes:
           - ReadWriteOnce
           resources:
@@ -49,9 +51,9 @@ grafana:
   enabled: true
   ingress:
     enabled: true
+    ingressClassName: traefik
     annotations:
-      kubernetes.io/ingress.class: "nginx" 
-      cert-manager.io/cluster-issuer: "letsencrypt-prod"      
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
     hosts:
     - grafana.lab.kevinf.xyz
     pathType: Prefix
@@ -63,15 +65,12 @@ grafana:
   persistence:
     enabled: true
     type: pvc
-    storageClassName: nfs
+    storageClassName: proxmox
     accessModes:
     - ReadWriteOnce
     size: 1Gi
   initChownData:
     enabled: false
-  rbac:
-    pspEnabled: false
-    pspUseAppArmor: false
   replicas: 1
   resources:
     requests:
@@ -82,9 +81,9 @@ prometheus:
   enabled: true
   ingress:
     enabled: true
+    ingressClassName: traefik
     annotations:
-      kubernetes.io/ingress.class: "nginx" 
-      cert-manager.io/cluster-issuer: "letsencrypt-prod"  
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
     hosts:
     - prometheus.lab.kevinf.xyz
     paths:
@@ -98,8 +97,8 @@ prometheus:
     replicas: 1
     scrapeInterval: 60s
     retention: 15d
-    secrets:
-    - etcd-client
+    # secrets:
+    # - etcd-client
     resources:
       requests:
         memory: "600Mi"
@@ -110,8 +109,8 @@ prometheus:
         metadata:
           name: kps
         spec:
-          storageClassName: iscsi
-          accessModes: 
+          storageClassName: proxmox
+          accessModes:
           - ReadWriteOnce
           resources:
             requests:
@@ -143,13 +142,13 @@ coreDns:
   enabled: true
 
 kubeEtcd:
-  enabled: true
-  serviceMonitor:
-    scheme: https
-    insecureSkipVerify: false
-    caFile: /etc/prometheus/secrets/etcd-client/ca.crt
-    certFile: /etc/prometheus/secrets/etcd-client/healthcheck-client.crt
-    keyFile: /etc/prometheus/secrets/etcd-client/healthcheck-client.key
+  enabled: false
+  # serviceMonitor:
+  #   scheme: https
+  #   insecureSkipVerify: false
+  #   caFile: /etc/prometheus/secrets/etcd-client/ca.crt
+  #   certFile: /etc/prometheus/secrets/etcd-client/healthcheck-client.crt
+  #   keyFile: /etc/prometheus/secrets/etcd-client/healthcheck-client.key
 
 kubeScheduler:
   enabled: true
@@ -185,11 +184,3 @@ prometheusOperator:
     requests:
       cpu: 100m
       memory: 100Mi
-
-kube-state-metrics:
-  podSecurityPolicy:
-    enabled: false
-
-prometheus-node-exporter:
-  rbac:
-    pspEnabled: false
