@@ -166,63 +166,6 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: envoy-gateway-crds
-  namespace: argocd
-spec:
-  project: default
-  sources:
-  - repoURL: docker.io/envoyproxy
-    chart: gateway-crds-helm
-    targetRevision: "1.*"
-    helm:
-      valueFiles:
-      - $repo/values/envoy-gateway-crds.yaml
-  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
-    targetRevision: HEAD
-    ref: repo
-  destination:
-    namespace: eg-system
-    server: https://kubernetes.default.svc
-  syncPolicy:
-    syncOptions:
-    - CreateNamespace=true
-    - ServerSideApply=true
-
----
-
-# Releases: https://hub.docker.com/r/envoyproxy/gateway-helm/tags
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: envoy-gateway
-  namespace: argocd
-spec:
-  project: default
-  sources:
-  - repoURL: docker.io/envoyproxy
-    chart: gateway-helm
-    targetRevision: "1.*"
-    helm:
-      releaseName: eg
-      skipCrds: true
-      valueFiles:
-      - $repo/values/envoy-gateway.yaml
-  - repoURL: https://github.com/kevinchanaka/kube-cluster-apps.git
-    targetRevision: HEAD
-    ref: repo
-  destination:
-    namespace: eg-system
-    server: https://kubernetes.default.svc
-  syncPolicy:
-    syncOptions:
-    - CreateNamespace=true
-    - ServerSideApply=true
-
----
-
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
   name: proxmox-csi-plugin
   namespace: argocd
 spec:
@@ -278,7 +221,7 @@ metadata:
 spec:
   project: default
   sources:
-  - repoURL: ghcr.io/traefik/helm/traefik
+  - repoURL: ghcr.io/traefik/helm
     chart: traefik
     targetRevision: "39.*"
     helm:

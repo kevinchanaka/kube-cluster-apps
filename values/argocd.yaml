@@ -6,42 +6,22 @@ configs:
     create: true
     server.insecure: "true"
 
+# ArgoCD application controller performance optimisation if required
+# controller:
+#   extraArgs:
+#   - --kubectl-parallelism-limit=3
+#   - --operation-processors=3
+#   - --status-processors=3
+#   - --wq-bucket-qps=3
+#   - --wq-bucket-size=30
+
 server:
-  service:
-    servicePortHttpsAppProtocol: kubernetes.io/h2c
-  httproute:
+  ingress:
     enabled: true
-    parentRefs:
-    - name: eg
-      namespace: eg-system
-      sectionName: argocd
-    hostnames:
-    - argocd.lab.kevinf.xyz
-    rules:
-    - matches:
-      - path:
-          type: PathPrefix
-          value: /
-      backendRefs:
-      - group: ""
-        kind: Service
-        name: argocd-server
-        port: 80
-        weight: 1
-  grpcroute:
-    enabled: true
-    parentRefs:
-    - name: eg
-      namespace: eg-system
-      sectionName: argocd-grpc
-    hostnames:
-    - grpc.argocd.lab.kevinf.xyz
-    rules:
-    - backendRefs:
-      - group: ""
-        kind: Service
-        name: argocd-server
-        port: 443
-        weight: 1
-  backendTLSPolicy:
-    enabled: false
+    ingressClassName: traefik
+    hostname: argocd.lab.kevinf.xyz
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      traefik.ingress.kubernetes.io/service.serversscheme: https
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    tls: true
