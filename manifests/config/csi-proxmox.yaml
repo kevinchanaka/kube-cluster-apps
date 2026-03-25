@@ -5,13 +5,14 @@ metadata:
   namespace: csi-proxmox
 spec:
   secretStoreRef:
-    name: infisical
-    kind: ClusterSecretStore 
-  refreshPolicy: OnChange
+    name: kubernetes-eso
+    kind: ClusterSecretStore
+  refreshInterval: 1h
   data:
     - secretKey: token
       remoteRef:
-        key: proxmox-csi-token
+        key: app-secrets
+        property: PROXMOX_CSI_TOKEN
   target:
     creationPolicy: Owner
     deletionPolicy: Retain

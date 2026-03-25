@@ -5,13 +5,14 @@ metadata:
   namespace: default
 spec:
   secretStoreRef:
-    name: infisical
-    kind: ClusterSecretStore 
-  refreshPolicy: OnChange
+    name: kubernetes-eso
+    kind: ClusterSecretStore
+  refreshInterval: 1h
   target:
     creationPolicy: Owner
     deletionPolicy: Retain
   data:
     - secretKey: token
       remoteRef:
-        key: cloudflare-api-external-dns-token
+        key: app-secrets
+        property: CLOUDFLARE_API_TOKEN

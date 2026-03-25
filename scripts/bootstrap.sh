@@ -9,9 +9,6 @@
 
 set -euo pipefail
 
-clientId=${INFISICAL_CLIENT_ID:?}
-clientSecret=${INFISICAL_CLIENT_SECRET:?}
-
 echo "Adding helm repos"
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo add flannel https://flannel-io.github.io/flannel/
@@ -24,14 +21,6 @@ echo "Templating manifests for ArgoCD"
 kubectl create namespace argocd || true
 helm template argocd oci://ghcr.io/argoproj/argo-helm/argo-cd --create-namespace --namespace argocd | kubectl apply --server-side -f -
 sleep 10
-
-echo "Installing ESO secret"
-kubectl create namespace external-secrets || true
-kubectl create secret generic infisical \
-    --namespace external-secrets \
-    --from-literal=clientId=${clientId} \
-    --from-literal=clientSecret=${clientSecret} \
-    --dry-run=client -o yaml | kubectl apply -f -
 
 echo "Deploying root app-of-apps"
 kubectl apply -f root.yaml
